@@ -29,16 +29,16 @@ class APICaller {
     static let key = "55edb762352afab7c34d25e00927bdd4" // temp
     static let shared = APICaller()
     
-    func fetchCurrentWeather(lat: Double, lon: Double, excludes: [ExcludeOpts]) async throws -> String { // temp return needs ot convert JSON to current weather model
+    
+//    https://api.openweathermap.org/data/3.0/onecall?lat=33.44&lon=-94.04&exclude=hourly,daily&appid=55edb762352afab7c34d25e00927bdd4
+    func fetchCurrentWeather(lat: Double, lon: Double, excludes: [ExcludeOpts]) async throws -> Weather? { // temp return needs ot convert JSON to current weather model
         let url = URL(string: "https://api.openweathermap.org/data/3.0/onecall?lat=\(lat)&lon=\(lon).04&exclude=\(String(describing: excludes.optsToString))&appid=\(APICaller.key)")
         
         let request = URLRequest(url: url!)
         let (data, _) = try await URLSession.shared.data(for: request)
-//        let fetchedData = try JSONDecoder().decode(<Model>, from: try mapResponse(response: (data,response)))
-        
-        let resp = String(data: data, encoding: .utf8) ?? ""
+        let resultJson = try JSONSerialization.jsonObject(with: data, options: []) as? [String:AnyObject]
 
-        return resp
+        return JsonFormatter().map(resultJson!)
     }
 }
 
